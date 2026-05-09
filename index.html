@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eduardo Lima — Operations & Technology Professional</title>
+    <meta name="description" content="Eduardo Lima — Technology and operations professional with 10+ years of experience in customer support, automation, field operations, and smart home technology.">
+    <style>
+        :root {
+            --bg: #0f1117;
+            --surface: #181a24;
+            --surface2: #1e2030;
+            --border: #2a2d3e;
+            --text: #e4e4e7;
+            --text2: #a1a1aa;
+            --accent: #3b82f6;
+            --accent2: #60a5fa;
+            --green: #22c55e;
+            --purple: #a78bfa;
+            --orange: #fb923c;
+            --cyan: #22d3ee;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        @font-face {
+            font-family: 'system';
+            src: local('Inter'), local('Segoe UI'), local('Helvetica Neue'), local('Arial');
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        a { color: var(--accent2); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: #93c5fd; }
+
+        /* HERO */
+        .hero {
+            padding: 64px 0 48px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-name {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-title {
+            font-size: 1.15rem;
+            color: var(--text2);
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        .hero-title span {
+            color: var(--accent2);
+            font-weight: 500;
+        }
+
+        .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text2);
+        }
+
+        .contact-row a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text2);
+        }
+
+        .contact-row a:hover { color: var(--accent2); }
+
+        .contact-row svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+        .badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .badge.blue { border-color: rgba(59,130,246,0.3); color: var(--accent2); }
+        .badge.green { border-color: rgba(34,197,94,0.3); color: var(--green); }
+        .badge.purple { border-color: rgba(167,139,250,0.3); color: var(--purple); }
+        .badge.orange { border-color: rgba(251,146,60,0.3); color: var(--orange); }
+        .badge.cyan { border-color: rgba(34,211,238,0.3); color: var(--cyan); }
+
+        /* SECTIONS */
+        section {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        section:last-child { border-bottom: none; }
+
+        .section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--text);
+            max-width: 720px;
+        }
+
+        .summary-text strong { color: #fff; font-weight: 600; }
+
+        /* SKILLS GRID */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: border-color 0.2s;
+        }
+
+        .skill-card:hover { border-color: rgba(59,130,246,0.3); }
+
+        .skill-card-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-card-title .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .skill-card ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .skill-card li {
+            font-size: 0.82rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--surface2);
+            color: var(--text2);
+            border: 1px solid transparent;
+        }
+
+        /* EXPERIENCE */
+        .exp-block { margin-bottom: 40px; }
+        .exp-block:last-child { margin-bottom: 0; }
+
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .exp-role {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .exp-company {
+            font-size: 0.95rem;
+            color: var(--accent2);
+            margin-bottom: 2px;
+        }
+
+        .exp-date {
+            font-size: 0.82rem;
+            color: var(--text2);
+            white-space: nowrap;
+        }
+
+        .exp-location {
+            font-size: 0.82rem;
+            color: var(--text2);
+            margin-bottom: 12px;
+        }
+
+        .exp-list {
+            list-style: none;
+            display: grid;
+            gap: 6px;
+        }
+
+        .exp-list li {
+            font-size: 0.9rem;
+            color: var(--text);
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .exp-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        /* PROJECTS */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .project-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: rgba(59,130,246,0.3);
+            transform: translateY(-2px);
+        }
+
+        .project-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .project-card p {
+            font-size: 0.85rem;
+            color: var(--text2);
+            line-height: 1.55;
+        }
+
+        /* TOOLS TABLE */
+        .tools-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tools-table tr { border-bottom: 1px solid var(--border); }
+        .tools-table tr:last-child { border-bottom: none; }
+
+        .tools-table td {
+            padding: 10px 0;
+            font-size: 0.88rem;
+            vertical-align: top;
+        }
+
+        .tools-table td:first-child {
+            color: var(--accent2);
+            font-weight: 600;
+            width: 160px;
+            white-space: nowrap;
+        }
+
+        .tools-table td:last-child { color: var(--text2); }
+
+        /* AVAILABILITY */
+        .avail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .avail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .avail-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .avail-icon svg { width: 16px; height: 16px; color: var(--green); }
+
+        /* FOOTER */
+        footer {
+            padding: 32px 0;
+            text-align: center;
+            color: var(--text2);
+            font-size: 0.78rem;
+        }
+
+        /* PRINT */
+        @media print {
+            body { background: #fff; color: #111; font-size: 12px; }
+            .hero-name { -webkit-text-fill-color: #111; background: none; }
+            .skill-card, .project-card { border-color: #ddd; background: #fafafa; }
+            .badge { border-color: #ccc; }
+            section { border-color: #eee; }
+            .hero { border-color: #eee; }
+        }
+
+        /* MOBILE */
+        @media (max-width: 640px) {
+            .hero-name { font-size: 2rem; }
+            .hero { padding: 40px 0 32px; }
+            section { padding: 32px 0; }
+            .skills-grid { grid-template-columns: 1fr; }
+            .exp-header { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- HERO -->
+    <header class="hero">
+        <h1 class="hero-name">Eduardo Lima</h1>
+        <p class="hero-title">
+            <span>Operations & Technology Professional</span> — Customer Support, Automation, Field Ops & Smart Home Systems
+        </p>
+        <div class="contact-row">
+            <a href="mailto:00eduardolima@gmail.com">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                00eduardolima@gmail.com
+            </a>
+            <a href="tel:+14072058958">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                (407) 205-8958
+            </a>
+            <a href="https://linkedin.com/in/eduardo-lima-0ba169aa" target="_blank">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                LinkedIn
+            </a>
+            <span style="color: var(--text2);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;width:14px;height:14px;margin-right:4px;"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                Orlando, FL — EST
+            </span>
+        </div>
+        <div class="badge-row">
+            <span class="badge blue">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                Available Immediately
+            </span>
+            <span class="badge green">Remote / Contractor 1099</span>
+            <span class="badge purple">Full-time / Part-time</span>
+            <span class="badge orange">EST Timezone</span>
+            <span class="badge cyan">US-Based</span>
+        </div>
+    </header>
+
+    <!-- SUMMARY -->
+    <section>
+        <div class="section-label">Professional Summary</div>
+        <p class="summary-text">
+            Technology and operations professional with <strong>over 10 years of experience</strong> managing customer-facing projects, field operations, technical support, automation systems, and smart home technology deployments across Central Florida.
+            <br><br>
+            Experienced in coordinating installations, troubleshooting technical systems, managing client communication, and building <strong>workflow automations using AI tools, Home Assistant, APIs, n8n, and cloud-based platforms</strong>.
+            <br><br>
+            Strong background working directly with <strong>high-end residential clients, builders, contractors, and remote teams</strong>. Combines technical problem-solving with customer support, operations coordination, and process optimization.
+            <br><br>
+            Fluent in English and Portuguese with experience supporting both American and Brazilian clients.
+        </p>
+    </section>
+
+    <!-- SKILLS -->
+    <section>
+        <div class="section-label">Core Skills</div>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="skill-card-title"><span class="dot" style="background:var(--accent2)"></span> Customer Support & Operations</div>
+                <ul>
+                    <li>Customer Communication</li>
+                    <li>Technical Troubleshooting</li>
+                    <li>Remote Support</li>
+                    <li>Operations Coordination</li>
+                    <li>Project Management</li>
+                    <li>CRM & Workflows</li>
+                    <li>Client Onboarding</li>
+                    <li>SOP Documentation</li>
+                    <li>Multi-team Coordination</li>
+                </ul>
+            </div>
+            <div class="skill-card">
+                <div class="skill-card-title"><span class="dot" style="background:var(--green)"></span> Automation & AI</div>
+                <ul>
+                    <li>n8n Workflows</li>
+                    <li>Home Assistant</li>
+                    <li>OpenAI / Claude APIs</li>
+                    <li>REST APIs & Webhooks</li>
+                    <li>LLM Integrations</li>
+                    <li>Zapier / Make</li>
+                    <li>AI Workflow Design</li>
+                    <li>Google Workspace</li>
+                    <li>Notion / Airtable</li>
+                </ul>
+            </div>
+            <div class="skill-card">
+                <div class="skill-card-title"><span class="dot" style="background:var(--orange)"></span> Technical & Field</div>
+                <ul>
+                    <li>UniFi Networking</li>
+                    <li>UniFi Protect</li>
+                    <li>Smart Home Systems</li>
+                    <li>Security & Surveillance</li>
+                    <li>Low Voltage Systems</li>
+                    <li>Wi-Fi Optimization</li>
+                    <li>Audio/Video Systems</li>
+                    <li>Remote Diagnostics</li>
+                    <li>Installation Planning</li>
+                </ul>
+            </div>
+            <div class="skill-card">
+                <div class="skill-card-title"><span class="dot" style="background:var(--purple)"></span> Languages</div>
+                <ul>
+                    <li>Portuguese (Native)</li>
+                    <li>English (Fluent)</li>
+                    <li>Spanish (Basic)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section>
+        <div class="section-label">Professional Experience</div>
+
+        <div class="exp-block">
+            <div class="exp-header">
+                <div>
+                    <div class="exp-role">Operations & Technology Supervisor</div>
+                    <div class="exp-company"><a href="https://elevesmart.com" target="_blank">Eleve Smart</a> — Orlando, FL</div>
+                </div>
+                <div class="exp-date">2025 — Present</div>
+            </div>
+            <ul class="exp-list">
+                <li>Coordinate smart home technology projects including networking, surveillance, automation, audio/video, and AI-driven home integration</li>
+                <li>Supervise field teams during installations, troubleshooting, and project execution</li>
+                <li>Work directly with homeowners, builders, and contractors to define technical project scope and solutions</li>
+                <li>Manage remote support and operational communication between clients and technicians</li>
+                <li>Design Home Assistant dashboards, automation workflows, and integrated smart home experiences</li>
+                <li>Configure and troubleshoot UniFi networking and surveillance systems</li>
+                <li>Improve operational workflows using automation tools, AI systems, and process standardization</li>
+                <li>Create technical documentation, installation checklists, and operational procedures</li>
+            </ul>
+        </div>
+
+        <div class="exp-block">
+            <div class="exp-header">
+                <div>
+                    <div class="exp-role">Independent Contractor — Sales & Operations</div>
+                    <div class="exp-company">Central Florida</div>
+                </div>
+                <div class="exp-date">2015 — 2025</div>
+            </div>
+            <ul class="exp-list">
+                <li>Managed customer relationships, estimates, scheduling, and operational coordination for residential service projects</li>
+                <li>Coordinated subcontractors, technicians, logistics, and project execution</li>
+                <li>Developed systems and checklists to improve customer experience and operational efficiency</li>
+                <li>Conducted on-site inspections, technical assessments, and client consultations</li>
+                <li>Built repeat-customer pipelines and long-term maintenance relationships</li>
+                <li>Managed high-volume customer communication via phone, email, and messaging platforms</li>
+            </ul>
+        </div>
+
+        <div class="exp-block">
+            <div class="exp-header">
+                <div>
+                    <div class="exp-role">Automation & AI Systems Projects</div>
+                    <div class="exp-company">Freelance / Personal Projects</div>
+                </div>
+                <div class="exp-date">2023 — Present</div>
+            </div>
+            <ul class="exp-list">
+                <li>Built automation workflows using n8n, APIs, AI tools, and cloud integrations</li>
+                <li>Developed AI-assisted operational systems for customer communication and workflow management</li>
+                <li>Created Home Assistant dashboards and automation systems for smart homes and commercial environments</li>
+                <li>Integrated notification systems, remote access workflows, and device orchestration</li>
+                <li>Worked with OpenAI, Claude, Home Assistant, UniFi, Google Workspace, and webhook-based automations</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- PROJECT HIGHLIGHTS -->
+    <section>
+        <div class="section-label">Project Highlights</div>
+        <div class="project-grid">
+            <div class="project-card">
+                <h4>Smart Home Automation Systems</h4>
+                <p>Designed and configured advanced Home Assistant dashboards and smart home automations. Integrated networking, security cameras, climate control, lighting, and entertainment systems into unified experiences.</p>
+            </div>
+            <div class="project-card">
+                <h4>AI Workflow Automation</h4>
+                <p>Built operational automations using AI tools and n8n for communication, task orchestration, and support processes.</p>
+            </div>
+            <div class="project-card">
+                <h4>Field Operations Management</h4>
+                <p>Coordinated multi-phase residential technology projects including low-voltage pre-wiring, networking infrastructure, and system deployment.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOOLS -->
+    <section>
+        <div class="section-label">Tools & Platforms</div>
+        <table class="tools-table">
+            <tr><td>Automation</td><td>n8n, Zapier, Make, Home Assistant</td></tr>
+            <tr><td>AI & LLMs</td><td>OpenAI API, Claude API, ChatGPT, General LLMs</td></tr>
+            <tr><td>Networking</td><td>UniFi (USG, Switches, APs), UniFi Protect</td></tr>
+            <tr><td>Smart Home</td><td>Home Assistant, Google Home, Apple Home, SmartThings</td></tr>
+            <tr><td>Communication</td><td>Slack, Discord, Zoom, Google Meet, Intercom</td></tr>
+            <tr><td>Productivity</td><td>Google Workspace, Notion, Airtable, Trello, Monday.com</td></tr>
+            <tr><td>Technical</td><td>REST APIs, Webhooks, YAML, Networking, Git</td></tr>
+        </table>
+    </section>
+
+    <!-- AVAILABILITY -->
+    <section>
+        <div class="section-label">Availability</div>
+        <div class="avail-grid">
+            <div class="avail-item">
+                <div class="avail-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                </div>
+                <div>
+                    <strong style="color:#fff;">Immediate Start</strong><br>
+                    <span style="color:var(--text2);font-size:0.82rem;">Ready to begin right away</span>
+                </div>
+            </div>
+            <div class="avail-item">
+                <div class="avail-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                </div>
+                <div>
+                    <strong style="color:#fff;">EST Time Zone</strong><br>
+                    <span style="color:var(--text2);font-size:0.82rem;">US East Coast business hours</span>
+                </div>
+            </div>
+            <div class="avail-item">
+                <div class="avail-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                    <strong style="color:#fff;">Orlando, FL</strong><br>
+                    <span style="color:var(--text2);font-size:0.82rem;">US-based, open to remote work</span>
+                </div>
+            </div>
+            <div class="avail-item">
+                <div class="avail-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+                </div>
+                <div>
+                    <strong style="color:#fff;">Contractor 1099 / W2</strong><br>
+                    <span style="color:var(--text2);font-size:0.82rem;">Full-time, part-time, freelance</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    <div class="container">
+        Eduardo Lima — Resume — 2025
+    </div>
+</footer>
+
+</body>
+</html>
