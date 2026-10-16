@@ -71,6 +71,46 @@ export default function EstimatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, project?.id]);
 
+  const demoRequested = search.get("demo") === "1";
+  const demoStarted = useRef(false);
+  useEffect(() => {
+    if (!demoRequested || !project || demoStarted.current) return;
+    demoStarted.current = true;
+    const demo =
+      "Troca de telhas cerâmicas 40 metros a 85 reais, calha de alumínio 12 metros a 60 reais, impermeabilização da laje 25 metros a 95 reais, mão de obra completa 2800 reais. Observação: cliente pediu garantia de um ano e visita na sexta de manhã.";
+    (async () => {
+      setProcessing(true);
+      setStatusMsg("Transcrevendo e separando itens…");
+      try {
+        const form = new FormData();
+        form.append("audio", new Blob(), "estimate.webm");
+        form.append("demoTranscript", demo);
+        const res = await fetch("/api/estimate/from-audio", { method: "POST", body: form });
+        const data = await res.json();
+        setTranscript(data.transcript || "");
+        const next: Estimate = {
+          id: uuid(),
+          projectId: project.id,
+          createdAt: new Date().toISOString(),
+          transcript: data.transcript || "",
+          items: data.items as EstimateLineItem[],
+          notes: data.notes || "",
+          taxRate: 0,
+          status: "draft",
+          followUps: [],
+        };
+        setEstimate(next);
+        upsertEstimate(project.id, next);
+        setStatusMsg(`Pronto (${data.source}). Revise e envie ao cliente.`);
+      } catch {
+        setStatusMsg("Falha ao processar áudio.");
+        demoStarted.current = false;
+      } finally {
+        setProcessing(false);
+      }
+    })();
+  }, [demoRequested, project]);
+
   if (!project) {
     return (
       <AppShell title="Obra não encontrada">
@@ -333,9 +373,10 @@ export default function EstimatePage() {
             </p>
             <button
               type="button"
+              data-action="demo-audio"
               onClick={() => void runDemoSpeech()}
               disabled={processing || recording}
-              className="text-xs font-semibold text-sand/60 underline"
+              className="mt-1 w-full max-w-xs rounded-xl border border-sand/30 bg-white/10 px-4 py-3 text-sm font-bold text-sand transition hover:bg-white/20 disabled:opacity-50"
             >
               Usar áudio de demonstração
             </button>

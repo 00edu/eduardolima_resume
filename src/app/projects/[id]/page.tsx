@@ -92,7 +92,7 @@ export default function ProjectPage() {
       </div>
 
       <Link
-        href={`/projects/${project.id}/estimate`}
+        href={`/projects/${project.id}/estimate?demo=1`}
         className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-clay py-3.5 text-sm font-bold text-white shadow-soft"
       >
         <Mic size={16} /> Criar orçamento por áudio

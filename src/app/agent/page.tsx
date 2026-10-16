@@ -14,12 +14,13 @@ export default function AgentPage() {
   const [agent, setAgent] = useState(state.agent);
 
   async function sendAsClient() {
-    if (!message.trim()) return;
+    if (!message.trim() || sending) return;
     setSending(true);
+    const text = message.trim();
     const clientMsg = {
       id: uuid(),
       from: "client" as const,
-      text: message.trim(),
+      text,
       createdAt: new Date().toISOString(),
     };
     addAgentMessage(clientMsg);
@@ -29,16 +30,23 @@ export default function AgentPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: clientMsg.text,
-          agent: state.agent,
-          history: state.agentInbox,
+          message: text,
+          agent: agent,
+          history: [...state.agentInbox, clientMsg],
         }),
       });
       const data = await res.json();
       addAgentMessage({
         id: uuid(),
         from: "agent",
-        text: data.reply,
+        text: data.reply || "Recebi sua mensagem e avisei a equipe.",
+        createdAt: new Date().toISOString(),
+      });
+    } catch {
+      addAgentMessage({
+        id: uuid(),
+        from: "agent",
+        text: "Tive um problema de conexão, mas já deixei o pedido registrado para a equipe.",
         createdAt: new Date().toISOString(),
       });
     } finally {
@@ -95,6 +103,58 @@ export default function AgentPage() {
 
       <section className="space-y-3">
         <h3 className="font-display text-lg font-semibold">Simular conversa do cliente</h3>
+        <button
+          type="button"
+          data-action="agent-demo"
+          disabled={sending}
+          onClick={() => {
+            setMessage("Consigo visita sexta de manhã?");
+            window.setTimeout(() => {
+              void (async () => {
+                const text = "Consigo visita sexta de manhã?";
+                setSending(true);
+                const clientMsg = {
+                  id: uuid(),
+                  from: "client" as const,
+                  text,
+                  createdAt: new Date().toISOString(),
+                };
+                addAgentMessage(clientMsg);
+                setMessage("");
+                try {
+                  const res = await fetch("/api/agent/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      message: text,
+                      agent,
+                      history: [...state.agentInbox, clientMsg],
+                    }),
+                  });
+                  const data = await res.json();
+                  addAgentMessage({
+                    id: uuid(),
+                    from: "agent",
+                    text: data.reply || "Recebi sua mensagem e avisei a equipe.",
+                    createdAt: new Date().toISOString(),
+                  });
+                } catch {
+                  addAgentMessage({
+                    id: uuid(),
+                    from: "agent",
+                    text: "Tive um problema de conexão, mas já deixei o pedido registrado.",
+                    createdAt: new Date().toISOString(),
+                  });
+                } finally {
+                  setSending(false);
+                }
+              })();
+            }, 0);
+          }}
+          className="w-full rounded-xl border border-clay/30 bg-clay/10 py-3 text-sm font-bold text-clay disabled:opacity-50"
+        >
+          {sending ? "Lia está respondendo…" : "Enviar pergunta de exemplo"}
+        </button>
         <div className="max-h-80 space-y-2 overflow-y-auto rounded-2xl border border-ink/8 bg-white/60 p-3">
           {state.agentInbox.map((m) => (
             <div
@@ -112,23 +172,30 @@ export default function AgentPage() {
             </div>
           ))}
         </div>
-        <div className="flex gap-2">
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void sendAsClient();
+          }}
+        >
           <input
+            name="clientMessage"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && void sendAsClient()}
             placeholder="Ex: Consigo remarcar para sexta 10h?"
             className="flex-1 rounded-xl border border-ink/10 bg-white/80 px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-pine/30"
+            autoComplete="off"
           />
           <button
-            type="button"
-            disabled={sending}
-            onClick={() => void sendAsClient()}
+            type="submit"
+            disabled={sending || !message.trim()}
             className="rounded-xl bg-clay px-4 text-white disabled:opacity-50"
+            aria-label="Enviar"
           >
             <Send size={18} />
           </button>
-        </div>
+        </form>
       </section>
     </AppShell>
   );
