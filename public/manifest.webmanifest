@@ -1,0 +1,10 @@
+{
+  "name": "ObraCam",
+  "short_name": "ObraCam",
+  "description": "Documentação de obras e orçamento por áudio",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3eee4",
+  "theme_color": "#2f5d50",
+  "lang": "pt-BR"
+}
