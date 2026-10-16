@@ -1,38 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Bot, CalendarClock, Send, Sparkles } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { useAppState } from "@/lib/hooks";
-import { addAgentMessage, updateAgent } from "@/lib/store";
+import { addAgentMessage, loadState, updateAgent } from "@/lib/store";
 
 export default function AgentPage() {
   const [state] = useAppState();
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [agent, setAgent] = useState(state.agent);
+  const sendingLock = useRef(false);
 
-  async function sendAsClient() {
-    if (!message.trim() || sending) return;
+  async function sendText(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed || sendingLock.current) return;
+    sendingLock.current = true;
     setSending(true);
-    const text = message.trim();
     const clientMsg = {
       id: uuid(),
       from: "client" as const,
-      text,
+      text: trimmed,
       createdAt: new Date().toISOString(),
     };
     addAgentMessage(clientMsg);
     setMessage("");
+    const history = [...loadState().agentInbox];
     try {
       const res = await fetch("/api/agent/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: text,
-          agent: agent,
-          history: [...state.agentInbox, clientMsg],
+          message: trimmed,
+          agent,
+          history,
         }),
       });
       const data = await res.json();
@@ -50,8 +53,13 @@ export default function AgentPage() {
         createdAt: new Date().toISOString(),
       });
     } finally {
+      sendingLock.current = false;
       setSending(false);
     }
+  }
+
+  async function sendAsClient() {
+    await sendText(message);
   }
 
   function saveAgent(e: React.FormEvent) {
@@ -107,50 +115,7 @@ export default function AgentPage() {
           type="button"
           data-action="agent-demo"
           disabled={sending}
-          onClick={() => {
-            setMessage("Consigo visita sexta de manhã?");
-            window.setTimeout(() => {
-              void (async () => {
-                const text = "Consigo visita sexta de manhã?";
-                setSending(true);
-                const clientMsg = {
-                  id: uuid(),
-                  from: "client" as const,
-                  text,
-                  createdAt: new Date().toISOString(),
-                };
-                addAgentMessage(clientMsg);
-                setMessage("");
-                try {
-                  const res = await fetch("/api/agent/chat", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      message: text,
-                      agent,
-                      history: [...state.agentInbox, clientMsg],
-                    }),
-                  });
-                  const data = await res.json();
-                  addAgentMessage({
-                    id: uuid(),
-                    from: "agent",
-                    text: data.reply || "Recebi sua mensagem e avisei a equipe.",
-                    createdAt: new Date().toISOString(),
-                  });
-                } catch {
-                  addAgentMessage({
-                    id: uuid(),
-                    from: "agent",
-                    text: "Tive um problema de conexão, mas já deixei o pedido registrado.",
-                    createdAt: new Date().toISOString(),
-                  });
-                } finally {
-                  setSending(false);
-                }
-              })();
-            }, 0);
-          }}
+          onClick={() => void sendText("Consigo visita sexta de manhã?")}
           className="w-full rounded-xl border border-clay/30 bg-clay/10 py-3 text-sm font-bold text-clay disabled:opacity-50"
         >
           {sending ? "Lia está respondendo…" : "Enviar pergunta de exemplo"}
