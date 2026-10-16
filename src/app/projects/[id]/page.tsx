@@ -91,7 +91,14 @@ export default function ProjectPage() {
         </div>
       </div>
 
-      <div className="mb-4 flex gap-1 rounded-xl bg-ink/5 p-1">
+      <Link
+        href={`/projects/${project.id}/estimate`}
+        className="mb-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-clay py-3.5 text-sm font-bold text-white shadow-soft"
+      >
+        <Mic size={16} /> Criar orçamento por áudio
+      </Link>
+
+      <div className="mb-4 flex gap-1 rounded-xl bg-ink/5 p-1" role="tablist">
         {(
           [
             ["midia", "Mídia", Camera],
@@ -102,13 +109,16 @@ export default function ProjectPage() {
           <button
             key={key}
             type="button"
+            role="tab"
+            aria-selected={tab === key}
+            data-tab={key}
             onClick={() => setTab(key)}
             className={clsx(
               "flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2.5 text-xs font-bold transition",
               tab === key ? "bg-white text-ink shadow-sm" : "text-slate"
             )}
           >
-            <Icon size={14} /> {label}
+            <Icon size={14} aria-hidden /> {label}
           </button>
         ))}
       </div>
@@ -120,12 +130,16 @@ export default function ProjectPage() {
             type="file"
             accept="image/*,video/*"
             multiple
-            capture="environment"
-            className="hidden"
-            onChange={(e) => void onPickFiles(e.target.files)}
+            className="sr-only"
+            tabIndex={-1}
+            onChange={(e) => {
+              void onPickFiles(e.target.files);
+              e.target.value = "";
+            }}
           />
           <button
             type="button"
+            data-action="add-media"
             onClick={() => fileRef.current?.click()}
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-pine/40 bg-pine/5 py-4 text-sm font-bold text-pine"
           >

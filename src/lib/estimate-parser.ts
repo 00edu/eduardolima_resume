@@ -9,64 +9,72 @@ export function parseEstimateFromTranscript(transcript: string): {
   const text = transcript.replace(/\s+/g, " ").trim();
   const items: EstimateLineItem[] = [];
   const notes: string[] = [];
+  const consumed: { start: number; end: number }[] = [];
 
-  // Patterns like: "troca de telhas 40 metros a 85 reais"
-  const patterns = [
-    /([\wÀ-ÿ\s/\-]{3,80}?)\s+(\d+[.,]?\d*)\s*(m2|m²|metros?|unidades?|un|pcs?|horas?|hrs?|kg|litros?)?\s*(?:a|por|de)?\s*(?:r\$\s*)?(\d+[.,]?\d*)\s*(?:reais|real|r\$)?/gi,
-    /([\wÀ-ÿ\s/\-]{3,80}?)\s+(?:r\$\s*)?(\d+[.,]?\d*)\s*(?:reais|real)/gi,
-  ];
-
-  const seen = new Set<string>();
-
-  for (const re of patterns) {
-    let match: RegExpExecArray | null;
-    while ((match = re.exec(text)) !== null) {
-      const description = match[1].trim().replace(/^(e |também |mais )/i, "");
-      if (description.length < 3) continue;
-      const key = description.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-
-      if (match.length >= 5) {
-        const quantity = parseNum(match[2]) || 1;
-        const unit = normalizeUnit(match[3] || "un");
-        const unitPrice = parseNum(match[4]);
-        if (unitPrice > 0) {
-          items.push({
-            id: uuid(),
-            description: capitalize(description),
-            quantity,
-            unit,
-            unitPrice,
-          });
-        }
-      } else {
-        const unitPrice = parseNum(match[2]);
-        if (unitPrice > 0) {
-          items.push({
-            id: uuid(),
-            description: capitalize(description),
-            quantity: 1,
-            unit: "un",
-            unitPrice,
-          });
-        }
-      }
-    }
+  function overlaps(start: number, end: number) {
+    return consumed.some((c) => !(end <= c.start || start >= c.end));
   }
 
-  // Notes: sentences with "obs", "nota", "importante", "cliente pediu"
+  // qty + unit + price: "telhas 40 metros a 85 reais"
+  const withQty =
+    /([\wÀ-ÿ][\wÀ-ÿ\s/\-]{2,60}?)\s+(\d+[.,]?\d*)\s*(m2|m²|metros?|unidades?|un|pcs?|horas?|hrs?|kg|litros?)?\s*(?:a|por|de)?\s*(?:r\$\s*)?(\d+[.,]?\d*)\s*(?:reais|real|r\$)?/gi;
+
+  let match: RegExpExecArray | null;
+  while ((match = withQty.exec(text)) !== null) {
+    if (overlaps(match.index, match.index + match[0].length)) continue;
+    const description = cleanDesc(match[1]);
+    if (description.length < 3) continue;
+    const quantity = parseNum(match[2]) || 1;
+    const unit = normalizeUnit(match[3] || "un");
+    const unitPrice = parseNum(match[4]);
+    if (unitPrice <= 0) continue;
+    consumed.push({ start: match.index, end: match.index + match[0].length });
+    items.push({
+      id: uuid(),
+      description: capitalize(description),
+      quantity,
+      unit,
+      unitPrice,
+    });
+  }
+
+  // flat price: "mão de obra 1800 reais"
+  const flat =
+    /([\wÀ-ÿ][\wÀ-ÿ\s/\-]{2,60}?)\s+(?:r\$\s*)?(\d+[.,]?\d*)\s*(?:reais|real)/gi;
+  while ((match = flat.exec(text)) !== null) {
+    if (overlaps(match.index, match.index + match[0].length)) continue;
+    const description = cleanDesc(match[1]);
+    if (description.length < 3) continue;
+    const unitPrice = parseNum(match[2]);
+    if (unitPrice <= 0) continue;
+    // skip if this looks like a leftover of qty pattern ("40 metros a 85")
+    if (/^\d/.test(description) || /metros?\s+a$/i.test(description)) continue;
+    consumed.push({ start: match.index, end: match.index + match[0].length });
+    items.push({
+      id: uuid(),
+      description: capitalize(description),
+      quantity: 1,
+      unit: "un",
+      unitPrice,
+    });
+  }
+
   const noteMatches = text.match(
-    /(?:obs(?:ervação)?|nota|importante|cliente pediu|lembrar)[:\s]+([^.!?]+)/gi
+    /(?:obs(?:ervação)?|nota|importante|cliente pediu|lembrar|garantia)[:\s]+([^.!?]+)/gi
   );
   if (noteMatches) {
     for (const n of noteMatches) {
-      notes.push(n.replace(/^(obs(?:ervação)?|nota|importante)[:\s]+/i, "").trim());
+      notes.push(
+        n.replace(/^(obs(?:ervação)?|nota|importante|garantia)[:\s]+/i, "").trim()
+      );
     }
+  }
+  if (/garantia/i.test(text) && notes.length === 0) {
+    const g = text.match(/garantia[^.!?]*/i);
+    if (g) notes.push(g[0].trim());
   }
 
   if (items.length === 0) {
-    // Demo structured fallback from any audio
     items.push(
       {
         id: uuid(),
@@ -94,12 +102,19 @@ export function parseEstimateFromTranscript(transcript: string): {
   return { items, notes: notes.join(" · ") };
 }
 
+function cleanDesc(s: string): string {
+  return s
+    .trim()
+    .replace(/^(e |também |mais |com )/i, "")
+    .replace(/\s+/g, " ");
+}
+
 function parseNum(s: string): number {
   return Number(String(s).replace(",", ".")) || 0;
 }
 
 function normalizeUnit(u: string): string {
-  const x = u.toLowerCase();
+  const x = (u || "").toLowerCase();
   if (x.startsWith("m")) return "m²";
   if (x.startsWith("hor") || x.startsWith("hr")) return "h";
   if (x.startsWith("un") || x.startsWith("pc")) return "un";

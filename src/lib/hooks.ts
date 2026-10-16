@@ -6,9 +6,19 @@ import { getCurrentPosition } from "./geo";
 import { loadState, saveState } from "./store";
 import type { AppState } from "./types";
 
-// Re-export load/save for subscribe
+// Cache the state reference, update only when events fire
+let stateCache: AppState | null = null;
+
+function readCache(): AppState {
+  if (!stateCache) stateCache = loadState();
+  return stateCache;
+}
+
 function subscribe(cb: () => void) {
-  const handler = () => cb();
+  const handler = () => {
+    stateCache = loadState();
+    cb();
+  };
   window.addEventListener("obracam-state", handler);
   window.addEventListener("storage", handler);
   return () => {
@@ -18,23 +28,26 @@ function subscribe(cb: () => void) {
 }
 
 function getSnapshot(): AppState {
-  return loadState();
+  return readCache();
 }
 
+// Cache the server snapshot to avoid creating new object on each call
+const SERVER_SNAPSHOT: AppState = {
+  projects: [],
+  agent: {
+    name: "Lia",
+    tone: "profissional",
+    businessName: "ObraCam Pro",
+    availability: "Seg–Sáb 8h–18h",
+    phone: "",
+    email: "",
+  },
+  agentInbox: [],
+  currentUser: { name: "Você", role: "owner" },
+};
+
 function getServerSnapshot(): AppState {
-  return {
-    projects: [],
-    agent: {
-      name: "Lia",
-      tone: "profissional",
-      businessName: "ObraCam Pro",
-      availability: "Seg–Sáb 8h–18h",
-      phone: "",
-      email: "",
-    },
-    agentInbox: [],
-    currentUser: { name: "Você", role: "owner" },
-  };
+  return SERVER_SNAPSHOT;
 }
 
 export function useAppState() {
